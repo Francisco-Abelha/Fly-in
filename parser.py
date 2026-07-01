@@ -39,7 +39,7 @@ def split_metadata(value: str) -> tuple[str, dict[str, str]]:
     rest = rest.removesuffix("]")
     split: list = rest.split(" ")
     for element in split:
-        k, v = element.split("=")
+        k, v = element.split("=", 1)
         meta[k] = v
     return fixed, meta
 
@@ -54,7 +54,7 @@ def parse_zone(value: str) -> Zone:
         x = int(x_str)
         y = int(y_str)
     except ValueError:
-        print("Coords need to be integers")
+        raise ValueError("Coords need to be integers")
 
     zone_type = ZoneType(meta.get("zone", "normal"))
     color = meta.get("color")
@@ -133,10 +133,15 @@ def parser() -> Graph:
                 if key not in HANDLERS:
                     raise ValueError(f"Line {n}: unknown key '{key}'")
 
-                HANDLERS[key](value.strip(), graph)
+                try:
+                    HANDLERS[key](value.strip(), graph)
+                except ValueError as e:
+                    raise ValueError(f"Line {n}: {e}") from e
 
     except FileNotFoundError:
         raise ValueError(f"File '{sys.argv[1]}' not found")
+
+    graph.validate()
 
     return graph
 

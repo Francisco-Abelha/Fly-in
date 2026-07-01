@@ -12,6 +12,14 @@ class Graph:
         self.connections: list[Connection] = []
         self._edges: set[frozenset[Zone]] = set()
 
+    def validate(self) -> None:
+        if self.start is None:
+            raise ValueError("Graph has no start hub.")
+        if self.end is None:
+            raise ValueError("Graph has no end hub.")
+        if self.nb_drones is None:
+            raise ValueError("Graph has no number of drones.")
+
     def add_zone(self, zone: Zone) -> None:
 
         if zone.name in self.zones:
