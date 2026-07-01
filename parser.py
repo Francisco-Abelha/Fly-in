@@ -2,6 +2,7 @@ import sys
 from typing import Callable
 from graph import Graph
 from zone import Zone, ZoneType
+from connection import Connection
 
 
 Handler = Callable[[str, Graph], None]
@@ -83,8 +84,22 @@ def parse_end(value: str, graph: Graph) -> None:
 
 
 def parse_connection(value: str, graph: Graph) -> None:
-    # TODO dgwufivrvr
-    pass
+    fixed, meta = split_metadata(value)
+    parts = fixed.strip().split("-")
+    if len(parts) != 2:
+        raise ValueError(f"Connection needs 'hub_a - hub_b', got: {fixed}")
+
+    zone_a_name, zone_b_name = parts
+    zone_a = graph.zones.get(zone_a_name)
+    zone_b = graph.zones.get(zone_b_name)
+    if zone_a is None or zone_b is None:
+        raise ValueError(
+            "Unknown zone in connection: "
+            f"{zone_a_name}, {zone_b_name}"
+        )
+
+    max_link = validate_int(meta.get("max_link_capacity", "1"))
+    graph.add_connection(Connection(zone_a, zone_b, max_link))
 
 
 def parser() -> Graph:
@@ -133,6 +148,8 @@ def main() -> None:
         print(f"drones: {graph.nb_drones}")
         for zone in graph.zones.values():
             print(zone)
+        for connection in graph.connections:
+            print(connection)
 
     except ValueError as e:
         print(f"Error: {e}")

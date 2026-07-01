@@ -36,6 +36,7 @@ class Zone:
 
     def __repr__(self) -> str:
         return (
+            "ZONE --- "
             f"Name: '{self.name}', "
             f"Coords: {self.coords}, "
             f"Zone Type: {self.zone_type}, "
