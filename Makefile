@@ -1,6 +1,6 @@
 # ---- Configuration ------------------------------------------------------
 PYTHON := python3
-MAIN   := parser.py
+MAIN   := main.py
 # Default map passed to `run` / `debug`; override on the CLI, e.g.
 #   make run MAP=maps/hard/01_maze_nightmare.txt
 MAP    := maps/easy/01_linear_path.txt

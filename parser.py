@@ -104,10 +104,7 @@ def parse_connection(value: str, graph: Graph) -> None:
     graph.add_connection(Connection(zone_a, zone_b, max_link))
 
 
-def parser() -> Graph:
-
-    if len(sys.argv) != 2:
-        raise ValueError("Map file needs to be passed as an argument")
+def parser(path: str) -> Graph:
 
     graph = Graph()
     HANDLERS: dict[str, Handler] = {
@@ -119,7 +116,7 @@ def parser() -> Graph:
     }
 
     try:
-        with open(sys.argv[1]) as file:
+        with open(path) as file:
             for n, raw in enumerate(file, start=1):
 
                 line = raw.strip()
@@ -141,27 +138,8 @@ def parser() -> Graph:
                     raise ValueError(f"Line {n}: {e}") from e
 
     except FileNotFoundError:
-        raise ValueError(f"File '{sys.argv[1]}' not found")
+        raise ValueError(f"File '{path}' not found")
 
     graph.validate()
 
     return graph
-
-
-def main() -> None:
-
-    try:
-        graph = parser()
-        print(f"drones: {graph.nb_drones}")
-        for zone in graph.zones.values():
-            print(zone)
-        for connection in graph.connections:
-            print(connection)
-
-    except ValueError as e:
-        print(f"Error: {e}")
-        sys.exit(1)
-
-
-if __name__ == "__main__":
-    main()

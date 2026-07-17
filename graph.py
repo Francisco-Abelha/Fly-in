@@ -34,3 +34,5 @@ class Graph:
 
         self._edges.add(key)
         self.connections.append(connection)
+        connection.zone_a.neighbors.add(connection.zone_b)
+        connection.zone_b.neighbors.add(connection.zone_a)
