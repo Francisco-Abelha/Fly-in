@@ -1,5 +1,6 @@
 import sys
 from parser import parser
+from pathfinder import Pathfinder
 
 
 def main() -> None:
@@ -14,7 +15,13 @@ def main() -> None:
             print(zone)
         for connection in graph.connections:
             print(connection)
-    
+        print()
+        print()
+        path = Pathfinder(graph)
+        shortest_path = path.bfs()
+        for element in shortest_path:
+            print(element.name)
+
     except ValueError as e:
         print(f"Error: {e}")
         sys.exit(1)

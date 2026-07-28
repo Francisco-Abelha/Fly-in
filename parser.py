@@ -1,4 +1,3 @@
-import sys
 from typing import Callable
 from graph import Graph
 from zone import Zone, ZoneType
