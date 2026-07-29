@@ -18,7 +18,7 @@ def main() -> None:
         print()
         print()
         path = Pathfinder(graph)
-        shortest_path = path.bfs()
+        shortest_path = path.dijkstra()
         for element in shortest_path:
             print(element.name)
 
