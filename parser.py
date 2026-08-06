@@ -57,8 +57,6 @@ def parse_zone(value: str) -> Zone:
 
     zone_type = ZoneType(meta.get("zone", "normal"))
     color = meta.get("color")
-    if not color:
-        raise ValueError("Color metadata not specified!")
     max_drones = validate_int(meta.get("max_drones", "1"))
 
     return Zone(name, x, y, zone_type, color, max_drones)
