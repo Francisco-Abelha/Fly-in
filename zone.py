@@ -39,6 +39,11 @@ class Zone:
             return True
         return False
 
+    def is_priority(self) -> bool:
+        if self.zone_type == ZoneType.PRIORITY:
+            return True
+        return False
+
     def __repr__(self) -> str:
         return (
             "ZONE --- "

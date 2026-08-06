@@ -59,15 +59,17 @@ class Pathfinder:
 
         counter = count()
 
-        pq = [(0, next(counter), start)]
+        pq = [(0, 0, next(counter), start)]
 
-        distances = {start: 0}
+        distances = {start: (0, 0)}
 
         visited = set()
 
+        INF = (float("inf"), float("inf"))
+
         while pq:
 
-            current_dist, _, current_node = heappop(pq)
+            cost, nonprio, _, current_node = heappop(pq)
 
             if current_node in visited:
                 continue
@@ -86,10 +88,11 @@ class Pathfinder:
             for neighbor in current_node.neighbors:
                 if neighbor.is_blocked():
                     continue
-                tentative_distance = current_dist + neighbor.movement_cost
-                if tentative_distance < distances.get(neighbor, float("inf")):
-                    distances[neighbor] = tentative_distance
-                    heappush(pq, (tentative_distance, next(counter), neighbor))
+                new_cost = cost + neighbor.movement_cost
+                new_np = nonprio + (0 if neighbor.is_priority() else 1)
+                if (new_cost, new_np) < distances.get(neighbor, INF):
+                    distances[neighbor] = (new_cost, new_np)
+                    heappush(pq, (new_cost, new_np, next(counter), neighbor))
                     parents[neighbor] = current_node
 
         return []
