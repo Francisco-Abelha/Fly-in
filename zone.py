@@ -34,6 +34,11 @@ class Zone:
             return 2
         return 1
 
+    def is_blocked(self) -> bool:
+        if self.zone_type == ZoneType.BLOCKED:
+            return True
+        return False
+
     def __repr__(self) -> str:
         return (
             "ZONE --- "

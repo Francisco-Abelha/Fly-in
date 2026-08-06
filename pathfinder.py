@@ -84,6 +84,8 @@ class Pathfinder:
                 return path
 
             for neighbor in current_node.neighbors:
+                if neighbor.is_blocked():
+                    continue
                 tentative_distance = current_dist + neighbor.movement_cost
                 if tentative_distance < distances.get(neighbor, float("inf")):
                     distances[neighbor] = tentative_distance
