@@ -1,6 +1,7 @@
 import sys
 from parser import parser
 from pathfinder import Pathfinder
+from path import Path
 
 
 def main() -> None:
@@ -17,10 +18,13 @@ def main() -> None:
             print(connection)
         print()
         print()
-        path = Pathfinder(graph)
-        shortest_path = path.dijkstra()
-        for element in shortest_path:
-            print(element.name)
+        finder = Pathfinder(graph)
+        path_list = finder.dijkstra()
+        if not path_list:
+            print("no path found")
+        else:
+            path = Path(path_list)
+            print(path)
 
     except ValueError as e:
         print(f"Error: {e}")
