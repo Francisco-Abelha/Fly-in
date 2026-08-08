@@ -2,6 +2,8 @@ import sys
 from parser import parser
 from pathfinder import Pathfinder
 from path import Path
+from drone import Drone
+from simulation import Simulation
 
 
 def main() -> None:
@@ -24,7 +26,10 @@ def main() -> None:
             print("no path found")
         else:
             path = Path(path_list)
-            print(path)
+            drones = [
+                Drone(i, path) for i in range(1, (graph.nb_drones or 0) + 1)
+            ]
+            Simulation(graph, drones).run_simulation()
 
     except ValueError as e:
         print(f"Error: {e}")

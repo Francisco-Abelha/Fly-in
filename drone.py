@@ -26,4 +26,4 @@ class Drone:
         self.step += 1
 
     def __repr__(self) -> str:
-        return f"{self.drone_id}-{self.position.name}"
+        return f"D{self.drone_id}-{self.position.name}"
