@@ -29,8 +29,11 @@ def main() -> None:
             drones = [
                 Drone(i, path) for i in range(1, (graph.nb_drones or 0) + 1)
             ]
-            Simulation(graph, drones).run_simulation()
-
+            sim = Simulation(graph, drones)
+            sim.run_simulation()
+        print()
+        print()
+        print(f"TOTAL TURNS: {sim.turn}")
     except ValueError as e:
         print(f"Error: {e}")
         sys.exit(1)
