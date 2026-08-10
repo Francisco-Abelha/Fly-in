@@ -4,10 +4,11 @@ from path import Path
 from pathfinder import Pathfinder
 from drone import Drone
 from simulation import Simulation
+from typing import Callable
 
 
 @pytest.fixture
-def run_turns():
+def run_turns() -> Callable:
     def _run(map_path: str) -> int:
         g = parser(map_path)
         path = Path(Pathfinder(g).dijkstra())

@@ -44,6 +44,11 @@ class Zone:
             return True
         return False
 
+    def is_restricted(self) -> bool:
+        if self.zone_type == ZoneType.RESTRICTED:
+            return True
+        return False
+
     def __repr__(self) -> str:
         return (
             "ZONE --- "

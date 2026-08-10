@@ -1,6 +1,5 @@
 from typing import Callable
 import pytest
-from conftest import run_turns
 
 
 @pytest.mark.parametrize("map_path, target", [
@@ -8,7 +7,9 @@ from conftest import run_turns
     ("maps/easy/02_simple_fork.txt", 8),
     ("maps/easy/03_basic_capacity.txt", 6),
 ])
-def test_easy_benchmark(run_turns: Callable[[str], int], map_path: str, target: int) -> None:
+def test_easy_benchmark(
+    run_turns: Callable[[str], int], map_path: str, target: int
+) -> None:
     assert run_turns(map_path) <= target
 
 
@@ -17,7 +18,9 @@ def test_easy_benchmark(run_turns: Callable[[str], int], map_path: str, target: 
     ("maps/medium/02_circular_loop.txt", 15),
     ("maps/medium/03_priority_puzzle.txt", 12),
 ])
-def test_medium_benchmark(run_turns: Callable[[str], int], map_path: str, target: int) -> None:
+def test_medium_benchmark(
+    run_turns: Callable[[str], int], map_path: str, target: int
+) -> None:
     assert run_turns(map_path) <= target
 
 
@@ -26,5 +29,7 @@ def test_medium_benchmark(run_turns: Callable[[str], int], map_path: str, target
     ("maps/hard/02_capacity_hell.txt", 35),
     ("maps/hard/03_ultimate_challenge.txt", 45)
 ])
-def test_hard_benchmark(run_turns: Callable[[str], int], map_path: str, target: int) -> None:
+def test_hard_benchmark(
+    run_turns: Callable[[str], int], map_path: str, target: int
+) -> None:
     assert run_turns(map_path) <= target
