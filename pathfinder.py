@@ -3,6 +3,7 @@ from zone import Zone
 from collections import deque
 from heapq import heappop, heappush
 from itertools import count
+from path import Path
 
 
 class Pathfinder:
@@ -46,13 +47,16 @@ class Pathfinder:
                             parents[neighbor] = current
         return []
 
-    def dijkstra(self) -> list[Zone]:
+    def dijkstra(self, reserved: set[Zone] | None = None) -> list[Zone]:
 
         start = self.graph.start
         goal = self.graph.end
 
         assert start is not None
         assert goal is not None
+
+        if reserved is None:
+            reserved = set()
 
         parents: dict[Zone, Zone | None] = {}
         parents[start] = None
@@ -88,6 +92,8 @@ class Pathfinder:
             for neighbor in current_node.neighbors:
                 if neighbor.is_blocked():
                     continue
+                if neighbor in reserved:
+                    continue
                 new_cost = cost + neighbor.movement_cost
                 new_np = nonprio + (0 if neighbor.is_priority() else 1)
                 if (new_cost, new_np) < distances.get(neighbor, INF):
@@ -96,3 +102,15 @@ class Pathfinder:
                     parents[neighbor] = current_node
 
         return []
+
+    def greedy_pathfinder(self) -> list[Path]:
+
+        reserved: set[Zone] = set()
+        paths_list: list[Path] = []
+        while True:
+            alg_output: list[Zone] = self.dijkstra(reserved)
+            if alg_output is []:
+                break
+            paths_list.append(Path(alg_output))
+            reserved.update(alg_output[1:-1])
+        return paths_list
