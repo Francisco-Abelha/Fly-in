@@ -1,0 +1,33 @@
+# Custom demo: three fully vertex-disjoint lanes of different lengths.
+# Purpose: prove the greedy finder + distributor split drones across
+# multiple paths, sending more drones down the shorter lanes.
+#
+# start has 3 separate exits (a1, b1, c1), goal has 3 separate entries,
+# and no lane shares an intermediate zone -> greedy finds 3 disjoint paths.
+nb_drones: 6
+
+start_hub: start 0 0 [color=green max_drones=6]
+
+# Lane A - shortest (cost 2)
+hub: a1 1 2 [color=blue]
+
+# Lane B - medium (cost 3)
+hub: b1 1 0 [color=cyan]
+hub: b2 2 0 [color=cyan]
+
+# Lane C - longest (cost 4)
+hub: c1 1 -2 [color=magenta]
+hub: c2 2 -2 [color=magenta]
+hub: c3 3 -2 [color=magenta]
+
+end_hub: goal 4 0 [color=red max_drones=6]
+
+connection: start-a1
+connection: a1-goal
+connection: start-b1
+connection: b1-b2
+connection: b2-goal
+connection: start-c1
+connection: c1-c2
+connection: c2-c3
+connection: c3-goal

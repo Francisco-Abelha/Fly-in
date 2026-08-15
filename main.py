@@ -1,9 +1,8 @@
 import sys
 from parser import parser
 from pathfinder import Pathfinder
-from path import Path
-from drone import Drone
 from simulation import Simulation
+from distributor import Distributor
 
 
 def main() -> None:
@@ -21,19 +20,19 @@ def main() -> None:
         print()
         print()
         finder = Pathfinder(graph)
-        path_list = finder.dijkstra()
-        if not path_list:
+        paths = finder.greedy_pathfinder()
+        if not paths:
             print("no path found")
         else:
-            path = Path(path_list)
-            drones = [
-                Drone(i, path) for i in range(1, (graph.nb_drones or 0) + 1)
-            ]
+            nb = graph.nb_drones
+            if nb is None:
+                raise ValueError("no drone count")
+            drones = Distributor(paths, nb).distribute()
             sim = Simulation(graph, drones)
             sim.run_simulation()
-        print()
-        print()
-        print(f"TOTAL TURNS: {sim.turn}")
+            print()
+            print()
+            print(f"TOTAL TURNS: {sim.turn}")
     except ValueError as e:
         print(f"Error: {e}")
         sys.exit(1)

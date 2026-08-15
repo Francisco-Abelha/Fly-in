@@ -109,7 +109,7 @@ class Pathfinder:
         paths_list: list[Path] = []
         while True:
             alg_output: list[Zone] = self.dijkstra(reserved)
-            if alg_output is []:
+            if not alg_output:
                 break
             paths_list.append(Path(alg_output))
             reserved.update(alg_output[1:-1])

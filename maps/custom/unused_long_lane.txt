@@ -1,0 +1,30 @@
+# Custom demo: one short lane (cost 2) and one long lane (cost 6).
+# Demonstrates: the distributor won't use a lane that doesn't help. With
+# only 2 drones, doubling up on the short lane (finish 3) beats splitting
+# onto the long one (finish 6), so the long lane is left EMPTY.
+# Expected: 2 paths found, but both drones assigned to the short lane;
+# long lane gets 0 drones; solved in 3 turns.
+nb_drones: 2
+
+start_hub: start 0 0 [color=green max_drones=2]
+
+# Short lane (cost 2)
+hub: short1 3 2 [color=blue]
+
+# Long lane (cost 6)
+hub: long1 1 -1 [color=magenta]
+hub: long2 2 -1 [color=magenta]
+hub: long3 3 -1 [color=magenta]
+hub: long4 4 -1 [color=magenta]
+hub: long5 5 -1 [color=magenta]
+
+end_hub: goal 6 0 [color=red max_drones=2]
+
+connection: start-short1
+connection: short1-goal
+connection: start-long1
+connection: long1-long2
+connection: long2-long3
+connection: long3-long4
+connection: long4-long5
+connection: long5-goal

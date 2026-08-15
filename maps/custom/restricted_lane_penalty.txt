@@ -1,0 +1,27 @@
+# Custom demo: two vertex-disjoint lanes, one with a RESTRICTED zone.
+# Lane A is all-normal (cost 3). Lane B enters a restricted zone (2-turn
+# cost), making it cost 4. Demonstrates: movement cost feeds the
+# distribution, so the cheaper lane receives more drones.
+# Expected: 2 paths (A cost 3, B cost 4), 5 drones split 3 (A) / 2 (B).
+# Also exercises restricted 2-turn transit inside a multi-path run
+# (watch for D<ID>-start-risky1 style connection output on lane B).
+nb_drones: 5
+
+start_hub: start 0 0 [color=green max_drones=5]
+
+# Lane A - all normal (cost 3)
+hub: clear1 1 1 [color=blue]
+hub: clear2 2 1 [color=blue]
+
+# Lane B - passes through a restricted zone (cost 4)
+hub: risky1 1 -1 [zone=restricted color=orange]
+hub: risky2 2 -1 [color=cyan]
+
+end_hub: goal 3 0 [color=red max_drones=5]
+
+connection: start-clear1
+connection: clear1-clear2
+connection: clear2-goal
+connection: start-risky1
+connection: risky1-risky2
+connection: risky2-goal

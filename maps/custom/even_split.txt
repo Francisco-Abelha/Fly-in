@@ -1,0 +1,25 @@
+# Custom demo: two vertex-disjoint lanes of EQUAL length.
+# Demonstrates: with equal-cost lanes, the distributor balances drones
+# evenly across them.
+# Expected: 2 paths (both cost 3), 6 drones split 3 / 3, solved in 5 turns
+# (single-path would be 8).
+nb_drones: 6
+
+start_hub: start 0 0 [color=green max_drones=6]
+
+# Lane A (cost 3)
+hub: a1 1 1 [color=blue]
+hub: a2 2 1 [color=blue]
+
+# Lane B (cost 3)
+hub: b1 1 -1 [color=cyan]
+hub: b2 2 -1 [color=cyan]
+
+end_hub: goal 3 0 [color=red max_drones=6]
+
+connection: start-a1
+connection: a1-a2
+connection: a2-goal
+connection: start-b1
+connection: b1-b2
+connection: b2-goal
