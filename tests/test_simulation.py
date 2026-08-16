@@ -23,5 +23,6 @@ def test_sim_respects_capacity(tmp_path: pathlib.Path) -> None:
     drones = [Drone(i, path) for i in range(1, (g.nb_drones or 0) + 1)]
     sim = Simulation(g, drones)
 
-    sim.run_simulation()
+    for _ in sim.run_simulation():
+        pass
     assert all(d.has_arrived for d in drones)

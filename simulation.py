@@ -1,6 +1,7 @@
 from drone import Drone
 from zone import Zone
 from graph import Graph
+import typing
 
 
 class Simulation:
@@ -13,17 +14,17 @@ class Simulation:
     def count_in_zone(self, zone: Zone) -> int:
         return sum(1 for d in self.drones if d.reserved_zone is zone)
 
-    def run_simulation(self) -> None:
+    def run_simulation(self) -> typing.Generator[list[Drone], None, None]:
 
         while not all(d.has_arrived for d in self.drones):
             self.turn += 1
             moved = False
-            print_list: list[str] = []
+            print_list: list[Drone] = []
             for d in self.drones:
                 if d.in_transit:
                     d.advance()
                     moved = True
-                    print_list.append(str(d))
+                    print_list.append(d)
                 else:
                     nxt = d.next_zone()
                     if nxt is None:
@@ -34,14 +35,13 @@ class Simulation:
                     ):
                         d.advance()
                         moved = True
-                        print_list.append(str(d))
+                        print_list.append(d)
             if not moved:
                 raise ValueError(
                     f"deadlock: no drone could move on turn {self.turn}"
                 )
             self._check_capacities()
-            if print_list:
-                print(" ".join(print_list))
+            yield print_list
 
     def _check_capacities(self) -> None:
         """Fail loudly if the current turn's state breaks a capacity rule.

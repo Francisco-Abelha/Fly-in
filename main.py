@@ -3,6 +3,7 @@ from parser import parser
 from pathfinder import Pathfinder
 from simulation import Simulation
 from distributor import Distributor
+from visualizer import TerminalVisualizer
 
 
 def main() -> None:
@@ -12,13 +13,6 @@ def main() -> None:
         sys.exit(1)
     try:
         graph = parser(sys.argv[1])
-        print(f"drones: {graph.nb_drones}")
-        for zone in graph.zones.values():
-            print(zone)
-        for connection in graph.connections:
-            print(connection)
-        print()
-        print()
         finder = Pathfinder(graph)
         paths = finder.greedy_pathfinder()
         if not paths:
@@ -29,10 +23,9 @@ def main() -> None:
                 raise ValueError("no drone count")
             drones = Distributor(paths, nb).distribute()
             sim = Simulation(graph, drones)
-            sim.run_simulation()
-            print()
-            print()
-            print(f"TOTAL TURNS: {sim.turn}")
+            drone_list = sim.run_simulation()
+            viz = TerminalVisualizer()
+            viz.visualize(graph, drone_list)
     except ValueError as e:
         print(f"Error: {e}")
         sys.exit(1)

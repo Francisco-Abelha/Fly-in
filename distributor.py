@@ -14,7 +14,10 @@ class Distributor:
         counters = [0] * len(self.paths)
         drone_id = 1
         for _ in range(self.nb_drones):
-            argmin = min(range(len(self.paths)), key=lambda i: self.paths[i].cost + counters[i])
+            argmin = min(
+                range(len(self.paths)),
+                key=lambda i: self.paths[i].cost + counters[i]
+            )
             counters[argmin] += 1
         for i in range(len(self.paths)):
             num_drones = counters[i]
