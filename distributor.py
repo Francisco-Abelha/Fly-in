@@ -3,13 +3,17 @@ from path import Path
 
 
 class Distributor:
+    """Assign drones across the available paths to minimise total turns."""
 
     def __init__(self, paths: list[Path], nb_drones: int) -> None:
         self.paths = paths
         self.nb_drones = nb_drones
 
     def distribute(self) -> list[Drone]:
-
+        """greedily places each drone on the path
+        with the lowest resulting finish time
+        (cost + drones already assigned), so shorter paths get more drones
+        """
         drones: list[Drone] = []
         counters = [0] * len(self.paths)
         drone_id = 1

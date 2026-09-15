@@ -5,26 +5,32 @@ import typing
 
 
 class Simulation:
-
+    """Turn-based engine that advances drones along their paths
+    to the end zone, respecting capacity rules.
+    """
     def __init__(self, graph: Graph, drones: list[Drone]) -> None:
         self.graph = graph
         self.drones = drones
         self.turn: int = 0
 
     def count_in_zone(self, zone: Zone) -> int:
+        """Count how many drones are in a zone"""
         return sum(1 for d in self.drones if d.reserved_zone is zone)
 
     def run_simulation(self) -> typing.Generator[list[Drone], None, None]:
-
+        """Generator that yields the list of drones that moved each turn.
+        runs until all drones have arrived.
+        raises ValueError on deadlock, and validates capacity each turn
+        """
         while not all(d.has_arrived for d in self.drones):
             self.turn += 1
             moved = False
-            print_list: list[Drone] = []
+            moved_drones: list[Drone] = []
             for d in self.drones:
                 if d.in_transit:
                     d.advance()
                     moved = True
-                    print_list.append(d)
+                    moved_drones.append(d)
                 else:
                     nxt = d.next_zone()
                     if nxt is None:
@@ -35,13 +41,13 @@ class Simulation:
                     ):
                         d.advance()
                         moved = True
-                        print_list.append(d)
+                        moved_drones.append(d)
             if not moved:
                 raise ValueError(
                     f"deadlock: no drone could move on turn {self.turn}"
                 )
             self._check_capacities()
-            yield print_list
+            yield moved_drones
 
     def _check_capacities(self) -> None:
         """Fail loudly if the current turn's state breaks a capacity rule.

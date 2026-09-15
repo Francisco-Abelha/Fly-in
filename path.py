@@ -2,13 +2,14 @@ from zone import Zone
 
 
 class Path:
-
+    """A path made of zones from start to end"""
     def __init__(self, zones: list[Zone]) -> None:
         self.zones = zones
         self.zone_set: set[Zone] = set(self.zones)
 
     @property
     def cost(self) -> int:
+        """Return the total cost of following the path"""
         total_cost: int = 0
         for zone in self.zones[1:]:
             total_cost += zone.movement_cost

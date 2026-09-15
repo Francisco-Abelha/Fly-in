@@ -2,6 +2,9 @@ from zone import Zone
 
 
 class Connection:
+    """Represents a connection between two zones.
+    Carries max_link_capacity so zone occupancy rules are respected.
+    """
 
     def __init__(
             self,
@@ -15,6 +18,7 @@ class Connection:
         self.max_link_capacity = max_link_capacity
 
     def __repr__(self) -> str:
+        """Return a human-readable representation of the connection."""
         return (
             "CONNECTION --- "
             f"Zone A: '{self.zone_a.name}', "

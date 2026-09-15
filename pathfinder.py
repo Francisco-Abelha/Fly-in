@@ -1,54 +1,24 @@
 from graph import Graph
 from zone import Zone
-from collections import deque
 from heapq import heappop, heappush
 from itertools import count
 from path import Path
 
 
 class Pathfinder:
-
+    """Calculates the optimal path from start to end considering
+    all the restrictions imposed by the subject.
+    """
     def __init__(self, graph: Graph) -> None:
         self.graph = graph
 
-    def bfs(self) -> list[Zone]:
-
-        start = self.graph.start
-        goal = self.graph.end
-
-        assert start is not None
-        assert goal is not None
-
-        parents: dict[Zone, Zone | None] = {}
-        parents[start] = None
-
-        visited = set()
-
-        queue = deque([start])
-
-        visited.add(start)
-
-        while queue:
-            current = queue.popleft()
-            if current is not None:
-                if current == goal:
-                    path = []
-                    cursor: Zone | None = goal
-                    while cursor is not None:
-                        path.append(cursor)
-                        cursor = parents[cursor]
-                    path.reverse()
-                    return path
-                else:
-                    for neighbor in current.neighbors:
-                        if neighbor not in visited:
-                            visited.add(neighbor)
-                            queue.append(neighbor)
-                            parents[neighbor] = current
-        return []
-
     def dijkstra(self, reserved: set[Zone] | None = None) -> list[Zone]:
-
+        """Algorithm that finds the shortest path from start the end zone
+        Its cost-aware, skips blocked and eserved zones, preferes priority
+        zones and returns [] if the end is unreachable.
+        Reserve param is used by the greedy_pathfinder to calculate
+        multiple possible paths.
+        """
         start = self.graph.start
         goal = self.graph.end
 
@@ -104,7 +74,10 @@ class Pathfinder:
         return []
 
     def greedy_pathfinder(self) -> list[Path]:
-
+        """Find multiple vertex-disjoint paths: repeatedly run Dijkstra,
+        reserving each path's intermediate zones so later paths avoid them,
+        until no path remains. Return the list of paths.
+        """
         reserved: set[Zone] = set()
         paths_list: list[Path] = []
         while True:

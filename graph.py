@@ -3,6 +3,7 @@ from connection import Connection
 
 
 class Graph:
+    """Structure for the zones and connections map"""
 
     def __init__(self) -> None:
         self.nb_drones: int | None = None
@@ -13,6 +14,9 @@ class Graph:
         self._edges: set[frozenset[Zone]] = set()
 
     def validate(self) -> None:
+        """Checks start, end, and nb_drones exist
+        and raises an error otherwise
+        """
         if self.start is None:
             raise ValueError("Graph has no start hub.")
         if self.end is None:
@@ -21,13 +25,15 @@ class Graph:
             raise ValueError("Graph has no number of drones.")
 
     def add_zone(self, zone: Zone) -> None:
-
+        """Add a new zone to the graph"""
         if zone.name in self.zones:
             raise ValueError("Rejecting duplicate Zones")
         self.zones[zone.name] = zone
 
     def add_connection(self, connection: Connection) -> None:
-
+        """Add a connection to the graph,
+        wires both neighbors and rejects duplicates
+        """
         key = frozenset({connection.zone_a, connection.zone_b})
         if key in self._edges:
             raise ValueError("Error: Duplicate Connection")

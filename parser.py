@@ -7,28 +7,33 @@ from connection import Connection
 Handler = Callable[[str, Graph], None]
 
 
-def validate_int(value: str) -> int:
-
+def validate_positive_int(value: str, field: str = 'value') -> int:
+    """Validate a positive integer from a string."""
     if not value:
-        raise ValueError("Number of drones can't be empty")
+        raise ValueError(f"{field} can't be empty")
     try:
         num: int = int(value)
     except ValueError:
-        raise ValueError("Number of drones must be an integer")
+        raise ValueError(f"{field} must be a positive integer")
 
     if num <= 0:
-        raise ValueError("Number of drones must be greater than 0")
+        raise ValueError(f"{field} must be a positive integer")
 
     return num
 
 
 def parse_nb_drones(value: str, graph: Graph) -> None:
+    """Validate the number of drones specified by the map"""
     if graph.nb_drones is not None:
         raise ValueError("nb_drones defined twice")
-    graph.nb_drones = validate_int(value)
+    graph.nb_drones = validate_positive_int(value, "Number of drones")
 
 
 def split_metadata(value: str) -> tuple[str, dict[str, str]]:
+    """Retrieve the metadata that can be found in the map files,
+    in the zone lines, right after the position data
+    and return it in the (fixed, optional) format
+    """
     if "[" not in value:
         return value, {}
     fixed, _, rest = value.partition("[")
@@ -44,6 +49,9 @@ def split_metadata(value: str) -> tuple[str, dict[str, str]]:
 
 
 def parse_zone(value: str) -> Zone:
+    """Parse the Zone info found in the zone lines of the
+    map files
+    """
     fixed, meta = split_metadata(value)
     parts = fixed.split()
     if len(parts) != 3:
@@ -57,16 +65,20 @@ def parse_zone(value: str) -> Zone:
 
     zone_type = ZoneType(meta.get("zone", "normal"))
     color = meta.get("color")
-    max_drones = validate_int(meta.get("max_drones", "1"))
+    max_drones = validate_positive_int(
+        meta.get("max_drones", "1"), "Max number of drones"
+        )
 
     return Zone(name, x, y, zone_type, color, max_drones)
 
 
 def parse_hub(value: str, graph: Graph) -> None:
+    """Parse all zones that aren't start or finish"""
     graph.add_zone(parse_zone(value))
 
 
 def parse_start(value: str, graph: Graph) -> None:
+    """Parse the start zone"""
     if graph.start is not None:
         raise ValueError("Multiple starting points!!")
     zone = parse_zone(value)
@@ -75,6 +87,7 @@ def parse_start(value: str, graph: Graph) -> None:
 
 
 def parse_end(value: str, graph: Graph) -> None:
+    """Parse the end zone"""
     if graph.end is not None:
         raise ValueError("Multiple ending points!!")
     zone = parse_zone(value)
@@ -83,6 +96,9 @@ def parse_end(value: str, graph: Graph) -> None:
 
 
 def parse_connection(value: str, graph: Graph) -> None:
+    """Parse the Connections between zones, found after the zones lines
+    in the map files
+    """
     fixed, meta = split_metadata(value)
     parts = fixed.strip().split("-")
     if len(parts) != 2:
@@ -97,12 +113,16 @@ def parse_connection(value: str, graph: Graph) -> None:
             f"{zone_a_name}, {zone_b_name}"
         )
 
-    max_link = validate_int(meta.get("max_link_capacity", "1"))
+    max_link = validate_positive_int(
+        meta.get("max_link_capacity", "1"), "Max link capacity"
+        )
     graph.add_connection(Connection(zone_a, zone_b, max_link))
 
 
 def parser(path: str) -> Graph:
-
+    """Parse the whole Map file, using the above methods to validate the map
+    making sure all the info provided is correct and valid
+    """
     graph = Graph()
     HANDLERS: dict[str, Handler] = {
         "nb_drones": parse_nb_drones,

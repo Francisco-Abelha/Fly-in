@@ -2,7 +2,7 @@ from enum import Enum
 
 
 class ZoneType(str, Enum):
-
+    """Types of zones"""
     NORMAL = "normal"
     RESTRICTED = "restricted"
     PRIORITY = "priority"
@@ -10,7 +10,9 @@ class ZoneType(str, Enum):
 
 
 class Zone:
-
+    """Define a zone with all its attributes as well as
+    how many drones it can hold and all its neighbors.
+    """
     def __init__(
             self,
             name: str,
@@ -30,21 +32,25 @@ class Zone:
 
     @property
     def movement_cost(self) -> int:
+        """Return the cost of moving into a certain zone"""
         if self.zone_type == ZoneType.RESTRICTED:
             return 2
         return 1
 
     def is_blocked(self) -> bool:
+        """Tell if a zone isn't allowed to be moved into"""
         if self.zone_type == ZoneType.BLOCKED:
             return True
         return False
 
     def is_priority(self) -> bool:
+        """Tell if a zone is of priority status"""
         if self.zone_type == ZoneType.PRIORITY:
             return True
         return False
 
     def is_restricted(self) -> bool:
+        """Tell if a zone is restricted, meaning its cost is higher"""
         if self.zone_type == ZoneType.RESTRICTED:
             return True
         return False

@@ -7,7 +7,11 @@ from visualizer import TerminalVisualizer
 
 
 def main() -> None:
-
+    """Central method for this program, reads the arguments,
+    accesses the map file, parses and validates it. Builds a graph,
+    and Simulates the drone pathfinding and movement logic
+    while rendering a visualization
+    """
     if len(sys.argv) != 2:
         print("Usage: python main.py <map_file>")
         sys.exit(1)
@@ -25,7 +29,7 @@ def main() -> None:
             sim = Simulation(graph, drones)
             drone_list = sim.run_simulation()
             viz = TerminalVisualizer()
-            viz.visualize(graph, drone_list)
+            viz.visualize(drone_list)
     except ValueError as e:
         print(f"Error: {e}")
         sys.exit(1)
