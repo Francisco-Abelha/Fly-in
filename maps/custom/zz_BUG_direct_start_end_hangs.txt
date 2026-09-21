@@ -1,0 +1,37 @@
+# Custom BUG REPRO -- running this map HANGS FOREVER. Ctrl-C to escape.
+# Do not run it during a defence, and do not commit it until the bug is fixed.
+#
+# Demonstrates: greedy_pathfinder() in pathfinder.py reserves only a path's
+# INTERIOR zones:
+#
+#     reserved.update(alg_output[1:-1])
+#
+# The cheapest path on this map is the direct start->goal shortcut, whose
+# zone list is exactly [start, goal]. Its interior slice [1:-1] is EMPTY, so
+# nothing is ever added to `reserved`. dijkstra() therefore returns that same
+# 2-zone path on every iteration, `if not alg_output: break` never fires, and
+# the `while True` loop spins forever while paths_list grows without bound
+# until the process is killed or runs out of memory.
+#
+# Note this is NOT a degenerate two-zone map: lane A below gives it a genuine
+# choice of routes. Any map where start is wired straight to the end triggers
+# it -- so does a self-loop such as `connection: start-start`.
+#
+# Expected once fixed: 2 paths (shortcut cost 1, lane A cost 3),
+# 4 drones, solved in 3 turns.
+nb_drones: 4
+
+start_hub: start 0 0 [color=green max_drones=4]
+
+# Lane A (cost 3) -- the long way round.
+hub: a1 1 1 [color=blue]
+hub: a2 2 1 [color=blue]
+
+end_hub: goal 3 0 [color=red max_drones=4]
+
+# The trigger: start connected straight to the end, no zone in between.
+connection: start-goal
+
+connection: start-a1
+connection: a1-a2
+connection: a2-goal

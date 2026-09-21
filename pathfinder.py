@@ -85,5 +85,8 @@ class Pathfinder:
             if not alg_output:
                 break
             paths_list.append(Path(alg_output))
-            reserved.update(alg_output[1:-1])
+            interior = alg_output[1:-1]
+            if not interior:
+                break
+            reserved.update(interior)
         return paths_list
