@@ -11,7 +11,7 @@ class Graph:
         self.start: Zone | None = None
         self.end: Zone | None = None
         self.connections: list[Connection] = []
-        self._edges: set[frozenset[Zone]] = set()
+        self._edges: dict[frozenset[Zone], Connection] = {}
 
     def validate(self) -> None:
         """Checks start, end, and nb_drones exist
@@ -23,6 +23,14 @@ class Graph:
             raise ValueError("Graph has no end hub.")
         if self.nb_drones is None:
             raise ValueError("Graph has no number of drones.")
+
+    def connection_between(
+            self, zone_a: Zone, zone_b: Zone
+    ) -> Connection | None:
+        """Returns the connection between two zones,
+        or None if it doesn't exist
+        """
+        return self._edges.get(frozenset({zone_a, zone_b}), None)
 
     def add_zone(self, zone: Zone) -> None:
         """Add a new zone to the graph"""
@@ -38,7 +46,7 @@ class Graph:
         if key in self._edges:
             raise ValueError("Error: Duplicate Connection")
 
-        self._edges.add(key)
+        self._edges[key] = connection
         self.connections.append(connection)
         connection.zone_a.neighbors.add(connection.zone_b)
         connection.zone_b.neighbors.add(connection.zone_a)

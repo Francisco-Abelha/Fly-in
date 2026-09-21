@@ -26,6 +26,7 @@ class Simulation:
             self.turn += 1
             moved = False
             moved_drones: list[Drone] = []
+            link_usage: dict[frozenset[Zone], int] = {}
             for d in self.drones:
                 if d.in_transit:
                     d.advance()
@@ -35,10 +36,15 @@ class Simulation:
                     nxt = d.next_zone()
                     if nxt is None:
                         continue
-                    if (
-                        self.count_in_zone(nxt) < nxt.max_drones
-                        or nxt is self.graph.end
-                    ):
+                    key = frozenset({d.position, nxt})
+                    link = self.graph.connection_between(d.position, nxt)
+                    zone_ok = (self.count_in_zone(nxt)
+                               < nxt.max_drones or nxt is self.graph.end)
+                    link_ok = link is not None and (
+                        link_usage.get(key, 0) < link.max_link_capacity
+                    )
+                    if zone_ok and link_ok:
+                        link_usage[key] = link_usage.get(key, 0) + 1
                         d.advance()
                         moved = True
                         moved_drones.append(d)
@@ -56,12 +62,6 @@ class Simulation:
         drones than its ``max_drones`` — start and end are exempt — and that
         no drone sits in a blocked zone. Raises ``ValueError`` on any
         violation so an illegal run can't masquerade as a fast one.
-
-        TODO (link capacity): also enforce each connection's
-        ``max_link_capacity``. Snapshot drone positions at the start of the
-        turn, tally how many drones cross each connection, and reject any
-        over its link cap. Not triggered by single-path routing, but needed
-        once multi-path can overload a link tighter than its feeding zones.
         """
         for zone in self.graph.zones.values():
             if zone is self.graph.start or zone is self.graph.end:
