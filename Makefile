@@ -15,7 +15,7 @@ install:
 	$(PYTHON) -m pip install flake8 mypy
 
 run:
-	$(PYTHON) $(MAIN) $(MAP)
+	$(PYTHON) $(MAIN)
 
 debug:
 	$(PYTHON) -m pdb $(MAIN) $(MAP)
