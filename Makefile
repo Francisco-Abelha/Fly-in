@@ -9,10 +9,10 @@ MYPY_FLAGS := --warn-return-any --warn-unused-ignores --ignore-missing-imports \
               --disallow-untyped-defs --check-untyped-defs
 
 # ---- Targets ------------------------------------------------------------
-.PHONY: install run debug clean lint lint-strict help
+.PHONY: install run debug clean lint lint-strict test help
 
 install:
-	$(PYTHON) -m pip install flake8 mypy
+	$(PYTHON) -m pip install flake8 mypy pytest
 
 run:
 	$(PYTHON) $(MAIN)
@@ -33,6 +33,9 @@ lint-strict:
 	flake8 .
 	mypy . --strict
 
+test:
+	$(PYTHON) -m pytest -v tests
+
 help:
-	@echo "Targets: install | run | debug | clean | lint | lint-strict"
+	@echo "Targets: install | run | debug | clean | lint | lint-strict | test"
 	@echo "Override the map with: make run MAP=path/to/map.txt"
