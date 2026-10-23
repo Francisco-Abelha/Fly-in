@@ -41,7 +41,7 @@ def split_metadata(value: str) -> tuple[str, dict[str, str]]:
         raise ValueError("malformed metadata bracket")
     meta: dict[str, str] = {}
     rest = rest.removesuffix("]")
-    split: list = rest.split(" ")
+    split: list[str] = rest.split(" ")
     for element in split:
         k, v = element.split("=", 1)
         meta[k] = v
@@ -154,8 +154,8 @@ def parser(path: str) -> Graph:
                 except ValueError as e:
                     raise ValueError(f"Line {n}: {e}") from e
 
-    except FileNotFoundError:
-        raise ValueError(f"File '{path}' not found")
+    except OSError as e:
+        raise ValueError(f"Cannot open {path}: {e.strerror}")
 
     graph.validate()
 

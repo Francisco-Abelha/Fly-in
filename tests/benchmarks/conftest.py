@@ -8,7 +8,7 @@ from typing import Callable
 
 
 @pytest.fixture
-def run_turns() -> Callable:
+def run_turns() -> Callable[[str], int]:
     def _run(map_path: str) -> int:
         g = parser(map_path)
         path = Path(Pathfinder(g).dijkstra())
