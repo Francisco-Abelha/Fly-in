@@ -114,7 +114,8 @@ def parse_connection(value: str, graph: Graph) -> None:
             "Unknown zone in connection: "
             f"{zone_a_name}, {zone_b_name}"
         )
-
+    if zone_a == zone_b:
+        raise ValueError(f"connection can't link '{zone_a_name}' to itself.")
     max_link = validate_positive_int(
         meta.get("max_link_capacity", "1"), "Max link capacity"
         )
