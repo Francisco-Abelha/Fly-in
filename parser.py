@@ -29,10 +29,14 @@ def parse_nb_drones(value: str, graph: Graph) -> None:
     graph.nb_drones = validate_positive_int(value, "Number of drones")
 
 
-def split_metadata(value: str) -> tuple[str, dict[str, str]]:
+def split_metadata(
+        value: str, allowed_keys: set[str]
+) -> tuple[str, dict[str, str]]:
     """Retrieve the metadata that can be found in the map files,
-    in the zone lines, right after the position data
+    in the zone and connection lines, right after the position data
     and return it in the (fixed, optional) format
+    Takes in allowed keys set and validates the metadata according
+    to that set of allowed keys.
     """
     if "[" not in value:
         return value, {}
@@ -41,9 +45,15 @@ def split_metadata(value: str) -> tuple[str, dict[str, str]]:
         raise ValueError("malformed metadata bracket")
     meta: dict[str, str] = {}
     rest = rest.removesuffix("]")
-    split: list[str] = rest.split(" ")
+    split: list[str] = rest.split()
     for element in split:
+        if "=" not in element:
+            raise ValueError(f"metadata tag '{element}' must be key=value")
         k, v = element.split("=", 1)
+        if k not in allowed_keys:
+            raise ValueError(f"unknown metadata key '{k}'")
+        if k in meta:
+            raise ValueError(f"can't have duplicate keys: '{k}'")
         meta[k] = v
     return fixed, meta
 
@@ -52,7 +62,7 @@ def parse_zone(value: str) -> Zone:
     """Parse the Zone info found in the zone lines of the
     map files
     """
-    fixed, meta = split_metadata(value)
+    fixed, meta = split_metadata(value, {"zone", "color", "max_drones"})
     parts = fixed.split()
     if len(parts) != 3:
         raise ValueError(f"Zone needs 'name x y', got: {fixed}")
@@ -101,7 +111,7 @@ def parse_connection(value: str, graph: Graph) -> None:
     """Parse the Connections between zones, found after the zones lines
     in the map files
     """
-    fixed, meta = split_metadata(value)
+    fixed, meta = split_metadata(value, {"max_link_capacity"})
     parts = fixed.strip().split("-")
     if len(parts) != 2:
         raise ValueError(f"Connection needs 'hub_a - hub_b', got: {fixed}")
