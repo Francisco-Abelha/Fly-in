@@ -57,6 +57,8 @@ def parse_zone(value: str) -> Zone:
     if len(parts) != 3:
         raise ValueError(f"Zone needs 'name x y', got: {fixed}")
     name, x_str, y_str = parts
+    if "-" in name:
+        raise ValueError(f"Zone name {name} can't contain '-'")
     try:
         x = int(x_str)
         y = int(y_str)
