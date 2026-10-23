@@ -1,0 +1,9 @@
+# Invalid: 'lava' is not a zone type (normal, restricted, priority, blocked)
+nb_drones: 2
+
+start_hub: start 0 0 [color=green]
+hub: waypoint1 1 0 [zone=lava color=blue]
+end_hub: goal 2 0 [color=red]
+
+connection: start-waypoint1
+connection: waypoint1-goal
